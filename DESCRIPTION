@@ -1,0 +1,18 @@
+Package: ROC
+Type: Package
+Title: Curve ROC analysis
+Version: 0.1.0
+Author: Juana Maria Vivo Molina, Manuel Franco Nicolás, Juan Pedro García Ortiz
+Maintainer: The package maintainer <yourself@somewhere.net>
+Description: The package analyzes the Curve ROC, identificates it among different types of Curve ROC and calculates the area under de curve through the method that is most accuracy. More about what it does (maybe more than one line)
+License: GPL-3
+Encoding: UTF-8
+LazyData: FALSE
+Depends: golubEsets
+import: golubEsets
+BiocViews:Software, StatisticalMetho, Regression
+RoxygenNote: 6.1.1
+Suggests: knitr
+VignetteBuilder: knitr
+
+

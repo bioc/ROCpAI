@@ -1,4 +1,10 @@
-exportPattern("Mc.pAUC")
-exportPattern("TpAUC.roc")
+import(boot)
+import(SummarizedExperiment)
+import(bibtex)
+exportPattern("internal_function")
+exportPattern("McpAUC")
+exportPattern("TpAUC")
 exportPattern("points.curve")
-import(golubEsets)
+exportPattern("MCpAUCboot")
+exportPattern("TpAUCboot")
+

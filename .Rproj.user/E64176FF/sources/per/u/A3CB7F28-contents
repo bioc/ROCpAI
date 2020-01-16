@@ -1,0 +1,82 @@
+library(devtools)
+install_github("juanpegarcia/ROCpAI")
+
+library(ROCpAI)
+library(fission)
+install.packages("fission")
+if (!requireNamespace("BiocManager", quietly = TRUE))
+  {install.packages("BiocManager")}
+install.packages("RCurl")
+BiocManager::install("SummarizedExperiment")
+if (!requireNamespace("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+
+BiocManager::install("fission")
+BiocManager::install("BiocCheck")
+BiocManager::install("GenomeInfoDb")
+
+
+library(MultiAssayExperiment)
+DataFrame()
+library(BiocCheck)
+BiocManager::install("bioch")
+data("fission")
+install.packages("summarized")
+
+strain <- dataset@colData@listData$strain
+pointsCurve<- points_curve(strain, t(assay(fission))[,"SPNCRNA.1080"])
+
+
+
+
+resultsT <- TpAUC(fission, low.value = 0, up.value = 0.25, plot = TRUE, selection = c("SPNCRNA.1080","SPAC186.08c"))
+resultsMC <- McpAUC(fission, low.value = 0, up.value = 0.25, plot = TRUE, selection = c("SPNCRNA.1080","SPAC186.08c"))
+resultstboot<- TpAUCboot(fission,low.value = 0, up.value = 0.25, seed = 1234, selection = c("SPNCRNA.1080","SPAC186.08c"))
+resultsMCboot <- MCpAUCboot(fission,low.value = 0, up.value = 0.25, seed = 1234, selection = c("SPNCRNA.1080","SPAC186.08c"))
+
+
+if (class(dataset)=="RangedSummarizedExperiment") {
+  strain <- dataset@colData@listData$strain
+  dataset <- as.data.frame(SummarizedExperiment::assay(dataset))
+  dataset <- scale(t(as.matrix(dataset[selection,])), center=TRUE, scale = TRUE)
+  name.variable <- colnames(dataset)
+  dataset <- as.data.frame(cbind(strain,dataset))
+}
+
+x <- assay(resultsT)
+x$St_pAUC
+dataset <- fission
+strain <- dataset@colData@listData$strain
+dataset <- as.data.frame(SummarizedExperiment::assay(fission))
+
+name.variable <- colnames(dataset)
+selection <- c("SPNCRNA.1080","SPAC186.08c","SPNCRNA.1420","SPCC70.08c")
+
+dataset <- scale(t(as.matrix(as.data.frame(SummarizedExperiment::assay(fission))[selection,])), center=TRUE, scale = TRUE)
+
+dataset <- as.data.frame(cbind(strain,dataset))
+TpAUC(dataset,low.value = 0, up.value = 0.25, plot = TRUE)
+
+
+St_pAUC <- 01
+pAUC <- 74
+sensitivity <- 65
+FPR <- 55
+object <- list(St_pAUC, pAUC, sensitivity, FPR)
+names(object) <- names
+  names <- names
+  
+  data.matrix <- as.matrix(object)
+  #cambiar
+  se=SummarizedExperiment::SummarizedExperiment(assays=data.matrix,
+                                                colData<-data.frame(metrics = (names)))
+  names(se@assays@data@listData[[1]]) <- names
+  return(se)
+}
+
+
+
+
+
+BiocCheck(".") 
+.\nman/

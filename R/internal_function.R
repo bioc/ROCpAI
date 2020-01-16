@@ -133,7 +133,7 @@ createSE <- function(object, names){
   #cambiar
   se=SummarizedExperiment::SummarizedExperiment(assays=data.matrix,
                           colData<-data.frame(metrics = (names)))
-  names(se@assays$data@listData[[1]]) <- names
+  names(se@assays@data@listData[[1]]) <- names
   return(se)
 }
 

@@ -1,17 +1,16 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
-<meta name="date" content="2019-12-16" />
+<meta name="date" content="2020-01-15" />
 
 <title>ROCpAI: ROC Partial Area Indexes for evaluating classifiers</title>
 
@@ -1424,7 +1423,8 @@ background-color: inherit;
 tt, code, pre {
 font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
 }
-h1, h2, h3, h4, h5, h6 { font-family: Helvetica, Arial, sans-serif;
+h1, h2, h3, h4, h5, h6 {
+font-family: Helvetica, Arial, sans-serif;
 margin: 1.2em 150px 0.6em 0em;
 
 padding-left: 65px;
@@ -1471,12 +1471,14 @@ font-weight: bold;
 font-weight: bold;
 }
 
-code { background-color: #f0f0f0;
+code {
+background-color: #f0f0f0;
 color: #404040;
 font-size: 90%;
 }
 
-.figure { margin: 0em 0px 0.5em;
+.figure {
+margin: 0em 0px 0.5em;
 }
 img {
 max-width: 100%;
@@ -1486,6 +1488,11 @@ padding: 0px 150px 0px 130px;
 p > img {
 padding-left: 65px;
 padding-right: 0px;
+}
+td > img {
+padding: 0px;
+max-width: 100%;
+display: inline;
 }
 img.smallfigure {
 padding-left: 195px;
@@ -1584,7 +1591,8 @@ code > span.st { color: #40A040; }
 code > span.co { color: #808080; font-style: italic; } 
 code > span.ot { color: #2020F0; } 
 code > span.al { color: #ff0000; font-weight: bold; } 
-code > span.fu { color: #E07020; }  code > span.er { color: #FF0000; } 
+code > span.fu { color: #E07020; } 
+code > span.er { color: #FF0000; } 
 code > span.identifier { color: #404040; }
 code > span.number { color: #D02070; }
 code > span.string { color: #40A040; }
@@ -1671,6 +1679,7 @@ summary {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -1773,9 +1782,9 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">ROCpAI: ROC Partial Area Indexes for evaluating classifiers</h1>
-<p class="author-name">Manuel Franco<span class="affil-mark">1</span>, Juana-María Vivo<span class="affil-mark">1</span> and Juan Pedro García Ortiz<span class="affil-mark">1</span></p>
-<p class="author-affiliation"><span class="affil-mark">1</span>Department of Statistics and Operations Research, University of Murcia, 30100, Murcia, Spain</p>
-<h4 class="date">2019-12-16</h4>
+<p class="author-name">Manuel Franco<span class="affil-mark">1</span>, Juana-María Vivo<span class="affil-mark">1</span> and Juan Pedro García-Ortiz<span class="affil-mark">1</span></p>
+<p class="author-affiliation"><span class="affil-mark">1</span>Department of Statistics and Operations Research, University of Murcia, IMIB-Arrixaca, 30100, Murcia, Spain</p>
+<h4 class="date">2020-01-15</h4>
 <h4 class="abstract">Abstract</h4>
 R package <strong>ROCpAI</strong> how-to guide
 <h4 class="package">Package</h4>
@@ -1788,22 +1797,22 @@ R package <strong>ROCpAI</strong> how-to guide
 <h1><span class="header-section-number">1</span> Introduction</h1>
 <p>The <strong>ROCpAI</strong> package allows to calculate the area under the ROC curve (AUC)
 and the partial area under the ROC curve (pAUC) as well as partial area indexes related with the pAUC over a restricted false positive interval of interest even if the ROC curve is improper.</p>
-<p>To do this, the package calculates the specificty and sensibility from a classification model with the function <strong>points.curve</strong>, after that, it calculates the partia area and two standardized: the McClish index <span class="citation">(McClish <a href="#ref-mcclish1989analyzing">1989</a>)</span> with the <strong>McpAUC</strong> if the ROC curve is proper over the restricted interval, and the <strong>TpAUC</strong> index according for any shape of the ROC curve over such interval, even if it is improper.
-Moreover,the functions <strong>TpAUCboot</strong> and <strong>MCpAUCboot</strong> apply bootstrap <span class="citation">(Canty and Ripley <a href="#ref-boot2019">2019</a>)</span>resampling to calculate the empiral standard deviation and the confidence interval of these standardized indexes.</p>
+<p>To do this, the package calculates the specificty and sensibility from a classification model with the function <strong>points.curve</strong>, after that, it calculates the partia area and two standardized: the McClish index <span class="citation">(McClish <a href="#ref-McClish1989">1989</a>)</span> with the <strong>McpAUC</strong> if the ROC curve is proper over the restricted interval, and the <strong>TpAUC</strong> index according for any shape of the ROC curve over such interval, even if it is improper.
+Moreover,the functions <strong>TpAUCboot</strong> and <strong>MCpAUCboot</strong> apply bootstrap resampling <span class="citation">(Davison and Hinkley <a href="#ref-DavisonHinkley1997">1997</a>)</span> to calculate the empiral standard deviation and the confidence interval of these standardized indexes.</p>
 <div id="installation" class="section level2">
 <h2><span class="header-section-number">1.1</span> Installation</h2>
-<p>The installation of <strong>ROCAI</strong> package is performed via Github:</p>
+<p>The installation of <strong>ROCpAI</strong> package is performed via Github:</p>
 <pre class="r"><code>devtools::install_github(&quot;juanpegarcia/ROCpAI&quot;)</code></pre>
 </div>
 <div id="prerequisites" class="section level2">
 <h2><span class="header-section-number">1.2</span> Prerequisites</h2>
-<p>The package <strong>ROCpAI</strong> depends on the following Bioconductor package :
-SummarizedExperiment <span class="citation">(Morgan et al. <a href="#ref-SummarizedExperiment2019">2019</a>)</span> and Boot <span class="citation">(Davison and Hinkley <a href="#ref-DavisonHinkley1997">1997</a>)</span>,</p>
+<p>The package <strong>ROCpAI</strong> depends on the following Bioconductor package:
+<code>SummarizedExperiment</code> <span class="citation">(Morgan et al. <a href="#ref-SummarizedExperiment2019">2019</a>)</span> and <code>boot</code> <span class="citation">(Angelo and Ripley <a href="#ref-boot2019">2019</a>)</span>,</p>
 </div>
 </div>
 <div id="using-rocpai" class="section level1">
 <h1><span class="header-section-number">2</span> Using ROCpAI</h1>
-<p>The <strong>fission</strong> dataset <span class="citation">(Leong et al. <a href="#ref-leong2014global">2014</a>)</span> contains the data of 36 samples of yeast and 7039 genes in a RangedSummarizedExperiment object type. These 36 samples are divided in 18 native samples and 18 mutated samples.</p>
+<p>The <strong>fission</strong> dataset <span class="citation">(Leong et al. <a href="#ref-Leongetal2014">2014</a>)</span> contains the data of 36 samples of yeast and 7039 genes in a RangedSummarizedExperiment object type. These 36 samples are divided in 18 native samples and 18 mutated samples.</p>
 <p>Data.frame example</p>
 <pre class="r"><code>genes </code></pre>
 <pre><code>##            Strain Gene1 Gene2 Gene3 Gene4 Gene5
@@ -1891,7 +1900,7 @@ SummarizedExperiment <span class="citation">(Morgan et al. <a href="#ref-Summari
 </div>
 <div id="mcpauc" class="section level2">
 <h2><span class="header-section-number">3.2</span> McpAUC</h2>
-<p>This function calculates the pAUC its standardised partial area index given by <span class="citation">(McClish <a href="#ref-mcclish1989analyzing">1989</a>)</span>. This function has five parameters. The first one is a data.frame or a RangedSummarizedExperiment object, if it is a data.frame object, the “Gold Standar” must be in the first column. The other four parameters are optionals; low.value and up.value are the false positive rate values that the function will use to calculate the pAUC. If low.value is NULL the function will take 0 as the lower limit. If up.value is NULL the function will use 1 as the upper value. The parameter plot generates a graph with the ROC curves generated. The last parameter is called “selection” and is only used if the parameter “dataset” is a RangedSummarizedExperiment object. This parameter is used to select the variables that will be analysed. If this parameter is NULL the function will analyse all the variables in the dataset.
+<p>This function calculates the pAUC its standardised partial area index given by <span class="citation">(McClish <a href="#ref-McClish1989">1989</a>)</span>. This function has five parameters. The first one is a data.frame or a RangedSummarizedExperiment object, if it is a data.frame object, the “Gold Standard” must be in the first column. The other four parameters are optionals; low.value and up.value are the false positive rate values that the function will use to calculate the pAUC. If low.value is NULL the function will take 0 as the lower limit. If up.value is NULL the function will use 1 as the upper value. The parameter plot generates a graph with the ROC curves generated. The last parameter is called “selection” and is only used if the parameter “dataset” is a RangedSummarizedExperiment object. This parameter is used to select the variables that will be analysed. If this parameter is NULL the function will analyse all the variables in the dataset.
 The function returns as RangedSummarizedExperiment object with the pAUC and the McpAUC scores,and the TPR and FPR values for each ROC curve generated.</p>
 <pre class="r"><code>resultMc &lt;- McpAUC(genes, low.value = 0, up.value = 0.25, plot=TRUE)
 resultMc</code></pre>
@@ -1912,7 +1921,7 @@ test.Mc$St_pAUC</code></pre>
 </div>
 <div id="tpauc" class="section level2">
 <h2><span class="header-section-number">3.3</span> TpAUC</h2>
-<p>This function calculates the pAUC and its standardised pAUC by the tighter partial area index (TpAUC) <span class="citation">(Vivo, Franco, and Vicari <a href="#ref-vivo2018rethinking">2018</a>)</span>. This function has five parameters. The first one is a data.frame or a RangedSummarizedExperiment object, if it is a data.frame object the “Gold Standar” must be in the first column. The other four parameters are optionals; low.value and up.value are the false positive rate values that the function will use to calculate the pAUC. If low. value is NULL the function will take 0 as the lower limit. If up.value is NULL the function will use 1 as the upper value. The parameter plot generates a graph for each ROC curve generated. The last parameter is called “selection” and is only used if the parameter “dataset” is a RangedSummarizedExperiment object. This parameter is used to select the variables that will be analysed. If this parameter is NULL the function will do a ROC curve with all the variables in the object.
+<p>This function calculates the pAUC and its standardised pAUC by the tighter partial area index (TpAUC) <span class="citation">(Vivo, Franco, and Vicari <a href="#ref-Vivoetal2018">2018</a>)</span>. This function has five parameters. The first one is a data.frame or a RangedSummarizedExperiment object, if it is a data.frame object the “Gold Standard” must be in the first column. The other four parameters are optionals; low.value and up.value are the false positive rate values that the function will use to calculate the pAUC. If low. value is NULL the function will take 0 as the lower limit. If up.value is NULL the function will use 1 as the upper value. The parameter plot generates a graph for each ROC curve generated. The last parameter is called “selection” and is only used if the parameter “dataset” is a RangedSummarizedExperiment object. This parameter is used to select the variables that will be analysed. If this parameter is NULL the function will do a ROC curve with all the variables in the object.
 The function returns as RangedSummarizedExperiment object with the pAUC and the TpAUC scores,and the TPR and FPR values for each ROC curve generated</p>
 <pre class="r"><code>resultsT &lt;- TpAUC(genes, low.value = 0, up.value = 0.25, plot=TRUE)
 resultsT</code></pre>
@@ -1933,35 +1942,35 @@ resultsT</code></pre>
 </div>
 <div id="tpaucboot" class="section level2">
 <h2><span class="header-section-number">3.4</span> TpAUCboot</h2>
-<p>This function use tthe R package “boot” to calculate the variability of the TpAUC for each classifier over the restricted fpr interval of interest, and its confidence interval based on the methods of the boot.ci function. The TpAUCboot use 7 parameters: dataset, low.value, up.value, r, seed, level and type.interval. Dataset is a matrix or a SummarizedExperiment object. The first column must be the condition of each case, while the following columns are the values of the variables or classifiers. The <strong>low.value</strong> and <strong>up.value</strong> are the FPR limits for the pAUC.The parameter <strong>r</strong> is the name of iterations. The parameter <strong>level</strong> is the value used for the confidence interval (per default is 0.95) and the <strong>type.interval</strong> defines the method applied by boot.ci, which can be “norm”, “basic”, “stud”, “perc” or “bca”. The last parameter is called “selection” and is only used if the parameter “dataset” is a RangedSummarizedExperiment object. This parameter is used to select the genes that will be analysed. If this parameter is NULL the function will do a ROC curve with all the variables in the object.
-This function returns a SummarizedExperiment object with the Tp_AUC, the standard desviation, and the lower and upper limits of the confidence interval</p>
+<p>This function use the R package <code>boot</code> to calculate the variability of the TpAUC for each classifier over the restricted fpr interval of interest, and its confidence interval based on the methods of the boot.ci function. The TpAUCboot function uses 7 parameters: dataset, low.value, up.value, r, seed, level and type.interval. Dataset is a matrix or a SummarizedExperiment object. The first column must be the condition of each case, while the following columns are the values of the variables or classifiers. The <strong>low.value</strong> and <strong>up.value</strong> are the FPR limits for the pAUC. The parameter <strong>r</strong> is the name of iterations. The parameter <strong>level</strong> is the value used for the confidence interval (per default is 0.95) and the <strong>type.interval</strong> defines the method applied by boot.ci, which can be “norm”, “basic”, “stud”, “perc” or “bca”. The last parameter is called “selection” and is only used if the parameter “dataset” is a RangedSummarizedExperiment object. This parameter is used to select the genes that will be analysed. If this parameter is NULL, the function will display a ROC curve with all the variables in the object.
+This function returns a SummarizedExperiment object with the TpAUC, the standard desviation, and the lower and upper limits of the confidence interval</p>
 <pre class="r"><code>resultstboot&lt;- TpAUCboot(genes,low.value = 0, up.value = 0.25, seed = 1234)</code></pre>
 <pre class="r"><code>test.TpAUCboot &lt;- assay(resultstboot)
 resultT &lt;- t(as.data.frame(cbind(test.TpAUCboot$Tp_AUC,test.TpAUCboot$sd,test.TpAUCboot$lwr,test.TpAUCboot$upr)))
-colnames(resultT) &lt;- c(&quot;SPNCRNA.1080&quot;,&quot;SPAC186.08c&quot;,&quot;SPNCRNA.1420&quot;,&quot;SPCC70.08c&quot;,&quot;SPAC212.04c&quot;)
+colnames(resultT) &lt;- c(&quot;Gene1&quot;, &quot;Gene2&quot;, &quot;Gene3&quot;, &quot;Gene4&quot;, &quot;Gene5&quot;)
 rownames(resultT) &lt;- c(&quot;Tp_AUC&quot;,&quot;sd&quot;,&quot;lwr&quot;,&quot;upr&quot;)</code></pre>
 <pre class="r"><code>resultT</code></pre>
-<pre><code>##        SPNCRNA.1080 SPAC186.08c SPNCRNA.1420 SPCC70.08c SPAC212.04c
-## Tp_AUC    0.7569444  0.77688172   0.82788671 0.80740741  0.86666667
-## sd        0.1628416  0.09816718   0.07773995 0.07371088  0.05968037
-## lwr       0.0000000  0.58895882   0.66915760 0.65182417  0.75383366
-## upr       0.9349605  0.97085581   1.00000000 1.00000000  0.98418080</code></pre>
+<pre><code>##            Gene1     Gene2      Gene3      Gene4      Gene5
+## Tp_AUC 0.7569444 0.7768817 0.82788671 0.80740741 0.86666667
+## sd     0.1303330 0.1180045 0.08339933 0.08032376 0.06815683
+## lwr    0.1687646 0.5298109 0.68507948 0.69359571 0.74722461
+## upr    0.8829955 0.9413234 1.00000000 1.00000000 1.00000000</code></pre>
 </div>
 <div id="mcpaucboot" class="section level2">
 <h2><span class="header-section-number">3.5</span> MCpAUCboot</h2>
-<p>This function use tthe R package “Boot” to calculate the variability of the MCpAUC for each classifier over the restricted fpr interval of interest, and its confidence interval based on the methods of the boot.ci function. The MCpAUCboot use 7 parameters: dataset, low.value, up.value, r, seed, level and type.interval. Dataset is a matrix or a SummarizedExperiment object. The first column must be the condition of each case, while the following columns are the values of the variables or classifiers. The <strong>low.value</strong> and <strong>up.value</strong> are the FPR limits for the pAUC.The parameter <strong>r</strong> is the name of iterations. The parameter <strong>level</strong> is the value used for the confidence interval (per default is 0.95) and the <strong>type.interval</strong> defines the method applied by boot.ci, which can be “norm”, “basic”, “stud”, “perc” or “bca”. The last parameter is called “selection” and is only used if the parameter “dataset” is a RangedSummarizedExperiment object. This parameter is used to select the genes that will be analysed. If this parameter is NULL the function will do a ROC curve with all the variables in the object.
+<p>This function use the R package <code>boot</code> to calculate the variability of the MCpAUC for each classifier over the restricted fpr interval of interest, and its confidence interval based on the methods of the boot.ci function. The MCpAUCboot function uses 7 parameters: dataset, low.value, up.value, r, seed, level and type.interval. Dataset is a matrix or a SummarizedExperiment object. The first column must be the condition of each case, while the following columns are the values of the variables or classifiers. The <strong>low.value</strong> and <strong>up.value</strong> are the FPR limits for the pAUC.The parameter <strong>r</strong> is the name of iterations. The parameter <strong>level</strong> is the value used for the confidence interval (per default is 0.95) and the <strong>type.interval</strong> defines the method applied by boot.ci, which can be “norm”, “basic”, “stud”, “perc” or “bca”. The last parameter is called “selection” and is only used if the parameter “dataset” is a RangedSummarizedExperiment object. This parameter is used to select the genes that will be analysed. If this parameter is NULL, the function will display a ROC curve with all the variables in the object.
 This function returns a SummarizedExperiment object with the MCpAUC, the standard desviation, and the lower and upper limits of the confidence interval.</p>
 <pre class="r"><code>resultsMcboot &lt;- MCpAUCboot(genes,low.value = 0, up.value = 0.25, seed = 1234)</code></pre>
 <pre class="r"><code>test.MCpAUCboot &lt;- assay(resultsMcboot)
 resultMc &lt;- t(as.data.frame(cbind(test.MCpAUCboot$MCp_AUC,test.MCpAUCboot$sd,test.MCpAUCboot$lwr,test.MCpAUCboot$upr)))
-colnames(resultMc) &lt;- c(&quot;SPNCRNA.1080&quot;,&quot;SPAC186.08c&quot;,&quot;SPNCRNA.1420&quot;,&quot;SPCC70.08c&quot;,&quot;SPAC212.04c&quot;)
+colnames(resultMc) &lt;- c(&quot;Gene1&quot;, &quot;Gene2&quot;, &quot;Gene3&quot;, &quot;Gene4&quot;, &quot;Gene5&quot;)
 rownames(resultMc) &lt;- c(&quot;MCp_AUC&quot;,&quot;sd&quot;,&quot;lwr&quot;,&quot;upr&quot;)</code></pre>
 <pre class="r"><code>resultMc</code></pre>
-<pre><code>##         SPNCRNA.1080 SPAC186.08c SPNCRNA.1420 SPCC70.08c SPAC212.04c
-## MCp_AUC           NA          NA   0.76543210 0.81305115  0.84126984
-## sd                NA          NA   0.07572146 0.07006879  0.07036949
-## lwr               NA          NA   0.62568317 0.66775029  0.70045888
-## upr               NA          NA   0.92070173 0.93878043  0.98578746</code></pre>
+<pre><code>##         Gene1 Gene2     Gene3     Gene4      Gene5
+## MCp_AUC    NA    NA 0.7654321 0.8130511 0.84126984
+## sd         NA    NA        NA 0.0798473 0.06468467
+## lwr        NA    NA 0.6410366 0.6444370 0.74742770
+## upr        NA    NA 0.9494349 0.9473616 0.98655949</code></pre>
 </div>
 </div>
 <div id="information" class="section level1">
@@ -1973,18 +1982,18 @@ to ROCpAI github issues <a href="https://github.com/juanpegarcia/ROCpAI/issues">
 </div>
 <div id="license" class="section level2">
 <h2><span class="header-section-number">4.2</span> License</h2>
-<p>The package ‘ROCpAI’ is licensed under GPL-3.</p>
+<p>The package <code>ROCpAI</code> is licensed under GPL-3.</p>
 </div>
 <div id="how-to-cite" class="section level2">
 <h2><span class="header-section-number">4.3</span> How to cite</h2>
-<p>Currently there is no literature for ROCpAI. Please cite the R package, the
+<p>Currently there is no literature for <code>ROCpAI</code>. Please cite the R package, the
 github. This package will be updated as soon as a citation is
 available.</p>
 </div>
 <div id="session-information" class="section level2">
 <h2><span class="header-section-number">4.4</span> Session information</h2>
 <pre class="r"><code>sessionInfo()</code></pre>
-<pre><code>## R version 3.5.3 (2019-03-11)
+<pre><code>## R version 3.6.2 (2019-12-12)
 ## Platform: x86_64-w64-mingw32/x64 (64-bit)
 ## Running under: Windows 10 x64 (build 18362)
 ## 
@@ -2000,44 +2009,44 @@ available.</p>
 ## [8] methods   base     
 ## 
 ## other attached packages:
-##  [1] ROCpAI_0.99.0               bibtex_0.4.2               
-##  [3] fission_1.2.0               SummarizedExperiment_1.12.0
-##  [5] DelayedArray_0.8.0          BiocParallel_1.16.6        
-##  [7] matrixStats_0.55.0          Biobase_2.42.0             
-##  [9] GenomicRanges_1.34.0        GenomeInfoDb_1.18.2        
-## [11] IRanges_2.16.0              S4Vectors_0.20.1           
-## [13] BiocGenerics_0.28.0         boot_1.3-23                
-## [15] BiocStyle_2.10.0           
+##  [1] ROCpAI_0.99.0               bibtex_0.4.2.2             
+##  [3] fission_1.6.0               SummarizedExperiment_1.16.1
+##  [5] DelayedArray_0.12.2         BiocParallel_1.20.1        
+##  [7] matrixStats_0.55.0          Biobase_2.46.0             
+##  [9] GenomicRanges_1.38.0        GenomeInfoDb_1.22.0        
+## [11] IRanges_2.20.2              S4Vectors_0.24.2           
+## [13] BiocGenerics_0.32.0         boot_1.3-24                
+## [15] BiocStyle_2.14.4           
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Rcpp_1.0.3             knitr_1.26             XVector_0.22.0        
-##  [4] magrittr_1.5           zlibbioc_1.28.0        lattice_0.20-38       
-##  [7] rlang_0.4.1            stringr_1.4.0          tools_3.5.3           
-## [10] grid_3.5.3             xfun_0.11              htmltools_0.4.0       
-## [13] yaml_2.2.0             digest_0.6.22          bookdown_0.15         
-## [16] Matrix_1.2-17          GenomeInfoDbData_1.2.0 BiocManager_1.30.10   
+##  [1] Rcpp_1.0.3             knitr_1.26             XVector_0.26.0        
+##  [4] magrittr_1.5           zlibbioc_1.32.0        lattice_0.20-38       
+##  [7] rlang_0.4.2            stringr_1.4.0          tools_3.6.2           
+## [10] grid_3.6.2             xfun_0.12              htmltools_0.4.0       
+## [13] yaml_2.2.0             digest_0.6.23          bookdown_0.17         
+## [16] Matrix_1.2-18          GenomeInfoDbData_1.2.2 BiocManager_1.30.10   
 ## [19] bitops_1.0-6           RCurl_1.95-4.12        evaluate_0.14         
-## [22] rmarkdown_1.17         stringi_1.4.3          compiler_3.5.3</code></pre>
+## [22] rmarkdown_2.0          stringi_1.4.4          compiler_3.6.2</code></pre>
 </div>
 <div id="bibliography" class="section level2 unnumbered">
 <h2>Bibliography</h2>
 <div id="refs" class="references">
 <div id="ref-boot2019">
-<p>Canty, Angelo, and B. D. Ripley. 2019. <em>Boot: Bootstrap R (S-Plus) Functions</em>.</p>
+<p>Angelo, Canty, and B. D. Ripley. 2019. <em>Boot: Bootstrap R (S-Plus) Functions</em>.</p>
 </div>
 <div id="ref-DavisonHinkley1997">
 <p>Davison, A. C., and D. V. Hinkley. 1997. <em>Bootstrap Methods and Their Applications</em>. Cambridge: Cambridge University Press. <a href="http://statwww.epfl.ch/davison/BMA/">http://statwww.epfl.ch/davison/BMA/</a>.</p>
 </div>
-<div id="ref-leong2014global">
-<p>Leong, Hui Sun, Keren Dawson, Chris Wirth, Yaoyong Li, Yvonne Connolly, Duncan L Smith, Caroline RM Wilkinson, and Crispin J Miller. 2014. “A Global Non-Coding Rna System Modulates Fission Yeast Protein Levels in Response to Stress.” <em>Nature Communications</em> 5: 3947.</p>
+<div id="ref-Leongetal2014">
+<p>Leong, Hui Sun, Keren Dawson, Chris Wirth, Yaoyong Li, Yvonne Connolly, Duncan L Smith, Caroline R M Wilkinson, and Crispin J Miller. 2014. “A Global Non-Coding Rna System Modulates Fission Yeast Protein Levels in Response to Stress.” <em>Nature Communications</em> 5: 3947.</p>
 </div>
-<div id="ref-mcclish1989analyzing">
+<div id="ref-McClish1989">
 <p>McClish, Donna Katzman. 1989. “Analyzing a Portion of the Roc Curve.” <em>Medical Decision Making</em> 9 (3): 190–95.</p>
 </div>
 <div id="ref-SummarizedExperiment2019">
 <p>Morgan, Martin, Valerie Obenchain, Jim Hester, and Hervé Pagès. 2019. <em>SummarizedExperiment: SummarizedExperiment Container</em>.</p>
 </div>
-<div id="ref-vivo2018rethinking">
+<div id="ref-Vivoetal2018">
 <p>Vivo, Juana-Marı́a, Manuel Franco, and Donatella Vicari. 2018. “Rethinking an Roc Partial Area Index for Evaluating the Classification Performance at a High Specificity Range.” <em>Advances in Data Analysis and Classification</em> 12 (3): 683–704.</p>
 </div>
 </div>

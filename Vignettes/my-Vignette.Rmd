@@ -2,17 +2,17 @@
 title: "ROCpAI: ROC Partial Area Indexes for evaluating classifiers"
 author:
 - name: "Manuel Franco"
-  affiliation: &deio Department of Statistics and Operations Research, University of Murcia, 30100, Murcia, Spain
+  affiliation: &deio Department of Statistics and Operations Research, University of Murcia, IMIB-Arrixaca, 30100, Murcia, Spain
 - name: "Juana-María Vivo"
   affiliation: *deio
-- name: "Juan Pedro García Ortiz"
+- name: "Juan Pedro García-Ortiz"
   affiliation: *deio
 package: ROCpAI
-date: "2019-12-16"
-
+date: "2020-01-15"
+bibliography: ROCpAI.bib
+biblio-style: apsr
 link-citations: yes
 
-bibliography: bibliografia.bib
 abstract: >
   R package **ROCpAI** how-to guide
 
@@ -23,7 +23,6 @@ vignette: >
   %\VignetteIndexEntry{ROC Partial Area Indexes for evaluating classifiers}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}  
-
 ---
 
 ```{r style, include=FALSE, results='hide'}
@@ -66,7 +65,7 @@ classification_Tp <- function(fpr.proc,sen.proc){
   return(classification)
 }
 
-#tighter partial area under a portion
+#Tighter partial area under a portion
 TpA <- function(fpr.proc, sen.proc){
   pA.roc <- pA(fpr.proc, sen.proc)
   type_roc <- classification_Tp(fpr.proc, sen.proc)
@@ -103,7 +102,6 @@ pA <- function(fpr.proc,sen.proc){
 }
 
 #McClish partial area under a portion
-
 MCpA <- function(sen.proc,fpr.proc){
   pA.roc <- pA(fpr.proc, sen.proc)
   type_roc <- classification_Tp(fpr.proc, sen.proc)
@@ -118,7 +116,6 @@ MCpA <- function(sen.proc,fpr.proc){
     } else {
       MCpA.roc<-NA}
 
-  #warning("Improper partial ROC curve: McClish's pAUC index is not well defined")
   return(MCpA.roc)
 }
 
@@ -134,8 +131,7 @@ fbootT<- function(dataset,bssample, low.limit, up.limit){
 
     sen.proc <- portion_ROC(up.limit, low.limit, fpr.roc,sen.roc)[,2]
     SpAUC[i-1] <- TpA(fpr.proc,sen.proc)
-
-
+    
   }
   return(SpAUC)
 }
@@ -163,16 +159,12 @@ createSE <- function(object, names){
   names <- names
 
   data.matrix <- as.matrix(object)
-  #cambiar
+  
   se=SummarizedExperiment::SummarizedExperiment(assays=data.matrix,
                           colData<-data.frame(metrics = (names)))
-  names(se@assays$data@listData[[1]]) <- names
+  names(se@assays@data@listData[[1]]) <- names
   return(se)
 }
-
-
-
-
 ```
 
 
@@ -181,24 +173,24 @@ createSE <- function(object, names){
 The **ROCpAI** package allows to calculate the area under the ROC curve (AUC)
 and the partial area under the  ROC curve (pAUC) as well as partial area indexes related with the pAUC over a restricted false positive interval of interest even if the ROC curve is improper. 
 
-To do this, the package calculates the specificty and sensibility from a classification model with the function **points.curve**, after that, it calculates the partia area and two standardized: the McClish index [@mcclish1989analyzing] with the **McpAUC** if the ROC curve is proper over the restricted interval, and the **TpAUC** index according for any shape of the ROC curve over such interval, even if it is improper.
-Moreover,the functions **TpAUCboot** and **MCpAUCboot** apply bootstrap [@boot2019]resampling to calculate the empiral standard deviation and the confidence interval of these standardized indexes.
+To do this, the package calculates the specificty and sensibility from a classification model with the function **points.curve**, after that, it calculates the partia area and two standardized: the McClish index [@McClish1989] with the **McpAUC** if the ROC curve is proper over the restricted interval, and the **TpAUC** index according for any shape of the ROC curve over such interval, even if it is improper.
+Moreover,the functions **TpAUCboot** and **MCpAUCboot** apply bootstrap resampling [@DavisonHinkley1997] to calculate the empiral standard deviation and the confidence interval of these standardized indexes.
 
 ## Installation ##
 
-The installation of **ROCAI** package is performed via Github:
+The installation of **ROCpAI** package is performed via Github:
 ```{r installation, eval=FALSE}
 devtools::install_github("juanpegarcia/ROCpAI")
 ```
 
 ## Prerequisites ##
 
-The package **ROCpAI** depends on the following Bioconductor package :
-SummarizedExperiment [@SummarizedExperiment2019] and Boot [@DavisonHinkley1997], 
+The package **ROCpAI** depends on the following Bioconductor package:
+`SummarizedExperiment` [@SummarizedExperiment2019] and `boot` [@boot2019], 
 
 # Using ROCpAI #
 
-The  **fission** dataset [@leong2014global] contains the data of 36 samples of yeast and 7039 genes in a RangedSummarizedExperiment object type. These 36 samples are divided in 18 native samples and 18 mutated samples.
+The  **fission** dataset [@Leongetal2014] contains the data of 36 samples of yeast and 7039 genes in a RangedSummarizedExperiment object type. These 36 samples are divided in 18 native samples and 18 mutated samples.
 
 ```{r, echo=FALSE, include=FALSE, results='hide'}
 library(fission)
@@ -250,7 +242,6 @@ points_curve<-function(x, y){
   return(xy)
 }
 
-
 ```
 
 ```{r}
@@ -262,7 +253,7 @@ points_curve(genes[,1], genes[,2])
 
 ## McpAUC ##
 
-This function calculates the pAUC its standardised partial area index given by [@mcclish1989analyzing]. This function has five parameters. The first one is a data.frame or a RangedSummarizedExperiment object, if it is a data.frame object, the "Gold Standar" must be in the first column. The other four parameters are optionals; low.value and up.value are the false positive rate values that the function will use to calculate the pAUC. If low.value is NULL the function will take 0 as the lower limit. If up.value is NULL the function will use 1 as the upper value. The parameter plot generates a graph with the ROC curves generated. The last parameter is called "selection" and is only used if the parameter "dataset" is a RangedSummarizedExperiment object. This parameter is used to select the variables that will be analysed. If this parameter is NULL the function will analyse all the variables in the dataset.
+This function calculates the pAUC its standardised partial area index given by [@McClish1989]. This function has five parameters. The first one is a data.frame or a RangedSummarizedExperiment object, if it is a data.frame object, the "Gold Standard" must be in the first column. The other four parameters are optionals; low.value and up.value are the false positive rate values that the function will use to calculate the pAUC. If low.value is NULL the function will take 0 as the lower limit. If up.value is NULL the function will use 1 as the upper value. The parameter plot generates a graph with the ROC curves generated. The last parameter is called "selection" and is only used if the parameter "dataset" is a RangedSummarizedExperiment object. This parameter is used to select the variables that will be analysed. If this parameter is NULL the function will analyse all the variables in the dataset.
 The function returns as RangedSummarizedExperiment object with the pAUC and the McpAUC scores,and the TPR and FPR values for each ROC curve generated.
 
 ```{r, echo=FALSE}
@@ -298,12 +289,9 @@ McpAUC <- function(dataset,  low.value=NULL, up.value=NULL, plot=FALSE, selectio
     fpr.proc <- portion_ROC(up.limit, low.limit, fpr.roc,sen.roc)[,1]
     sen.proc <- portion_ROC(up.limit, low.limit, fpr.roc,sen.roc)[,2]
 
-         ### TYPE OF PORTION ROC curve on [lower.fp <= e <= upper.fp]
+    ### TYPE OF PORTION ROC curve on [lower.fp <= e <= upper.fp]
 
-
-         #warning("Improper ROC curve on partial region: min.pauc<-(e2^2-e1^2)/2>pAUC")
-         #warning("PORTION ROC curve over partial plr")
-         ### BOUNDS FOR PARTIAL AREA INDEXES: MIN & MAX boundaries for TpAUC index
+    ### BOUNDS FOR PARTIAL AREA INDEXES: MIN & MAX boundaries for TpAUC index
     St_pAUC[[i-1]] <- MCpA(sen.proc,fpr.proc)
     pAUC[[i-1]] <- as.vector(pA(fpr.proc,sen.proc))
     sensitivity[[i-1]] <-as.vector(sen.proc)
@@ -315,7 +303,6 @@ McpAUC <- function(dataset,  low.value=NULL, up.value=NULL, plot=FALSE, selectio
       abline(v=up.value,col="black")
       par(new=TRUE)
 
-
     }
 
   }
@@ -326,15 +313,11 @@ McpAUC <- function(dataset,  low.value=NULL, up.value=NULL, plot=FALSE, selectio
   return(se)
 }
 
-
-
-
 ```
 
 ```{r}
 resultMc <- McpAUC(genes, low.value = 0, up.value = 0.25, plot=TRUE)
 resultMc
-
 ```
 ```{r}
 test.Mc<- assay(resultMc)
@@ -348,7 +331,7 @@ test.Mc$pAUC
 
 ## TpAUC ##
 
-This function calculates the pAUC and its standardised pAUC by the tighter partial area index (TpAUC) [@vivo2018rethinking]. This function has five parameters. The first one is a data.frame or a RangedSummarizedExperiment object, if it is a data.frame object the "Gold Standar" must be in the first column. The other four parameters are optionals; low.value and up.value are the false positive rate values that the function will use to calculate the pAUC. If low. value is NULL the function will take 0 as the lower limit. If up.value is NULL the function will use 1 as the upper value. The parameter plot generates a graph for each ROC curve generated. The last parameter is called "selection" and is only used if the parameter "dataset" is a RangedSummarizedExperiment object. This parameter is used to select the variables that will be analysed. If this parameter is NULL the function will do a ROC curve with all the variables in the object.
+This function calculates the pAUC and its standardised pAUC by the tighter partial area index (TpAUC) [@Vivoetal2018]. This function has five parameters. The first one is a data.frame or a RangedSummarizedExperiment object, if it is a data.frame object the "Gold Standard" must be in the first column. The other four parameters are optionals; low.value and up.value are the false positive rate values that the function will use to calculate the pAUC. If low. value is NULL the function will take 0 as the lower limit. If up.value is NULL the function will use 1 as the upper value. The parameter plot generates a graph for each ROC curve generated. The last parameter is called "selection" and is only used if the parameter "dataset" is a RangedSummarizedExperiment object. This parameter is used to select the variables that will be analysed. If this parameter is NULL the function will do a ROC curve with all the variables in the object.
 The function returns as RangedSummarizedExperiment object with the pAUC and the TpAUC scores,and the TPR and FPR values for each ROC curve generated
 
 ```{r, echo=FALSE}
@@ -401,15 +384,11 @@ TpAUC <- function(dataset,  low.value = NULL, up.value = NULL, plot = FALSE, sel
   return(se)
 
 }
-
-
-
 ```
 
 ```{r}
 resultsT <- TpAUC(genes, low.value = 0, up.value = 0.25, plot=TRUE)
 resultsT
-
 ```
 ```{r}
 test.TpAUC <- assay(resultsT)
@@ -425,8 +404,8 @@ test.TpAUC$pAUC
 
 ## TpAUCboot ##
 
-This function use tthe R package “boot” to calculate the variability of the TpAUC for each classifier over the restricted fpr interval of interest, and its confidence interval based on the methods of the boot.ci function. The TpAUCboot use 7 parameters: dataset,  low.value, up.value, r, seed, level and type.interval. Dataset is a matrix or a SummarizedExperiment object. The first column must be the condition of each case, while the following columns are the values of the variables or classifiers. The **low.value** and **up.value** are the FPR limits for the pAUC.The parameter **r** is the name of iterations. The parameter **level** is the value used for the confidence interval (per default is 0.95) and the **type.interval** defines the method applied by boot.ci, which can be "norm", "basic", "stud", "perc" or "bca". The last parameter is called "selection" and is only used if the parameter "dataset" is a RangedSummarizedExperiment object. This parameter is used to select the genes that will be analysed. If this parameter is NULL the function will do a ROC curve with all the variables in the object.
-This function returns a SummarizedExperiment object with the Tp_AUC, the standard desviation, and the lower and upper limits of the confidence interval
+This function use the R package `boot` to calculate the variability of the TpAUC for each classifier over the restricted fpr interval of interest, and its confidence interval based on the methods of the boot.ci function. The TpAUCboot function uses 7 parameters: dataset,  low.value, up.value, r, seed, level and type.interval. Dataset is a matrix or a SummarizedExperiment object. The first column must be the condition of each case, while the following columns are the values of the variables or classifiers. The **low.value** and **up.value** are the FPR limits for the pAUC. The parameter **r** is the name of iterations. The parameter **level** is the value used for the confidence interval (per default is 0.95) and the **type.interval** defines the method applied by boot.ci, which can be "norm", "basic", "stud", "perc" or "bca". The last parameter is called "selection" and is only used if the parameter "dataset" is a RangedSummarizedExperiment object. This parameter is used to select the genes that will be analysed. If this parameter is NULL, the function will display a ROC curve with all the variables in the object.
+This function returns a SummarizedExperiment object with the TpAUC, the standard desviation, and the lower and upper limits of the confidence interval
 
 ```{r, echo=FALSE}
 TpAUCboot <- function(dataset,  low.value = NULL, up.value = NULL,
@@ -474,7 +453,6 @@ TpAUCboot <- function(dataset,  low.value = NULL, up.value = NULL,
   return(x)
 
 }
-
 ```
 
 ```{r, warning='hide'}
@@ -484,7 +462,7 @@ resultstboot<- TpAUCboot(genes,low.value = 0, up.value = 0.25, seed = 1234)
 ```{r, echo='hide'}
 test.TpAUCboot <- assay(resultstboot)
 resultT <- t(as.data.frame(cbind(test.TpAUCboot$Tp_AUC,test.TpAUCboot$sd,test.TpAUCboot$lwr,test.TpAUCboot$upr)))
-colnames(resultT) <- c("SPNCRNA.1080","SPAC186.08c","SPNCRNA.1420","SPCC70.08c","SPAC212.04c")
+colnames(resultT) <- c("Gene1", "Gene2", "Gene3", "Gene4", "Gene5")
 rownames(resultT) <- c("Tp_AUC","sd","lwr","upr")
 ```
 ```{r}
@@ -493,7 +471,7 @@ resultT
 
 ## MCpAUCboot ##
 
-This function use tthe R package “Boot” to calculate the variability of the MCpAUC for each classifier over the restricted fpr interval of interest, and its confidence interval based on the methods of the boot.ci function. The MCpAUCboot use 7 parameters: dataset,  low.value, up.value, r, seed, level and type.interval. Dataset is a matrix or a SummarizedExperiment object. The first column must be the condition of each case, while the following columns are the values of the variables or classifiers. The **low.value** and **up.value** are the FPR limits for the pAUC.The parameter **r** is the name of iterations. The parameter **level** is the value used for the confidence interval (per default is 0.95) and the **type.interval** defines the method applied by boot.ci, which can be "norm", "basic", "stud", "perc" or "bca". The last parameter is called "selection" and is only used if the parameter "dataset" is a RangedSummarizedExperiment object. This parameter is used to select the genes that will be analysed. If this parameter is NULL the function will do a ROC curve with all the variables in the object.
+This function use the R package `boot` to calculate the variability of the MCpAUC for each classifier over the restricted fpr interval of interest, and its confidence interval based on the methods of the boot.ci function. The MCpAUCboot function uses 7 parameters: dataset, low.value, up.value, r, seed, level and type.interval. Dataset is a matrix or a SummarizedExperiment object. The first column must be the condition of each case, while the following columns are the values of the variables or classifiers. The **low.value** and **up.value** are the FPR limits for the pAUC.The parameter **r** is the name of iterations. The parameter **level** is the value used for the confidence interval (per default is 0.95) and the **type.interval** defines the method applied by boot.ci, which can be "norm", "basic", "stud", "perc" or "bca". The last parameter is called "selection" and is only used if the parameter "dataset" is a RangedSummarizedExperiment object. This parameter is used to select the genes that will be analysed. If this parameter is NULL, the function will display a ROC curve with all the variables in the object.
 This function returns a SummarizedExperiment object with the MCpAUC, the standard desviation, and the lower and upper limits of the confidence interval.
 
 ```{r, echo=FALSE}
@@ -546,7 +524,6 @@ MCpAUCboot <- function(dataset,  low.value = NULL, up.value = NULL,
 
 }
 
-
 ```
 
 ```{r, warning='hide'}
@@ -558,13 +535,12 @@ resultsMcboot <- MCpAUCboot(genes,low.value = 0, up.value = 0.25, seed = 1234)
 ```{r, echo='hide', results='hide'}
 test.MCpAUCboot <- assay(resultsMcboot)
 resultMc <- t(as.data.frame(cbind(test.MCpAUCboot$MCp_AUC,test.MCpAUCboot$sd,test.MCpAUCboot$lwr,test.MCpAUCboot$upr)))
-colnames(resultMc) <- c("SPNCRNA.1080","SPAC186.08c","SPNCRNA.1420","SPCC70.08c","SPAC212.04c")
+colnames(resultMc) <- c("Gene1", "Gene2", "Gene3", "Gene4", "Gene5")
 rownames(resultMc) <- c("MCp_AUC","sd","lwr","upr")
 ```
 ```{r}
 resultMc
 ```
-
 
 # Information #
 
@@ -575,11 +551,11 @@ to ROCpAI github issues [https://github.com/juanpegarcia/ROCpAI/issues](https://
 
 ## License ##
 
-The package 'ROCpAI' is licensed under GPL-3.
+The package `ROCpAI` is licensed under GPL-3.
 
 ## How to cite ##
 
-Currently there is no literature for ROCpAI. Please cite the R package, the
+Currently there is no literature for `ROCpAI`. Please cite the R package, the
 github. This package will be updated as soon as a citation is
 available.
 

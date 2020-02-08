@@ -63,7 +63,7 @@ McpAUC <- function(dataset,  low.value=NULL, up.value=NULL, plot=FALSE, selectio
     sensitivity[[i-1]] <-as.vector(sen.proc)
     FPR[[i-1]] <- as.vector(fpr.proc)
     if (isTRUE(plot)) {plot(sen.roc~fpr.roc, type="l", col=i, ylab="TPR", xlab="FPR")
-      legend(x= "bottomright",legend = name.variable[2:i], fill = 2:i, cex = 0.8)
+      legend(x= "bottomright",legend = name.variable[2:i], fill = i, cex = 0.8)
       abline(a=c(0,1),lwd=1, col="grey")
       abline(v=low.value,col="black")
       abline(v=up.value,col="black")

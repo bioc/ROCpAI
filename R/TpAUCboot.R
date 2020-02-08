@@ -11,22 +11,24 @@
 #' @param selection  vector that will only be used if the parameter "dataset" is a RangedSummarizedExperiment object.
 #' This parameter is used to select the variables that will be analysed
 #' @param level confidence level
+#' @param variable in case that dataset is a  SummarizedExperiment, indicate the Gold Standard
 #' @return SummarizedExperiment object with the Tp_AUC, the standard desviation, and the lower and upper limits of the confidence interval
 #' @export TpAUCboot
 #' @import boot
 #' @examples
 #'library(fission)
 #'data("fission")
-#'resultstboot<- TpAUCboot(fission,low.value = 0, up.value = 0.25, seed = 1234, selection = c("SPNCRNA.1080","SPAC186.08c"))
+#'resultstboot<- TpAUCboot(fission,low.value = 0, up.value = 0.25, seed = 1234, selection = c("SPNCRNA.1080","SPAC186.08c"), varidable="strain")
 
 
 TpAUCboot <- function(dataset,  low.value = NULL, up.value = NULL,
-                      r=50, seed=NULL, level = 0.95, type.interval="perc", selection = NULL) {
+                      r=50, seed=NULL, level = 0.95, type.interval="perc", selection = NULL, variable=NULL) {
 
   ci_TpAUC <- NULL; CpA=NULL;ci_MCpAUC <- NULL; sd <- NULL; par <- NULL; legend <- NULL; abline <- NULL;
 
   if (class(dataset)=="RangedSummarizedExperiment") {
-    strain <- dataset@colData@listData$strain
+    strain <- dataset@colData@listData
+    strain <- strain[variable][[1]]
     dataset <- as.data.frame(SummarizedExperiment::assay(dataset))
     dataset <- scale(t(as.matrix(dataset[selection,])), center=TRUE, scale = TRUE)
     name.variable <- colnames(dataset)

@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1581131262729.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "2C6A284B",
+    "lastKnownWriteTime" : 1581131342,
+    "last_content_update" : 1581131342969,
+    "path" : "~/ROCpIA/ROCpAI/R/McpAUC.R",
+    "project_path" : "R/McpAUC.R",
+    "properties" : {
+        "cursorPosition" : "25,35",
+        "scrollLine" : "14"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

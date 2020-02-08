@@ -9,7 +9,8 @@ TpAUC(
   low.value = NULL,
   up.value = NULL,
   plot = FALSE,
-  selection = NULL
+  selection = NULL,
+  variable = NULL
 )
 }
 \arguments{
@@ -23,6 +24,8 @@ TpAUC(
 
 \item{selection}{vector that will only be used if the parameter "dataset" is a RangedSummarizedExperiment object.
 This parameter is used to select the variables that will be analysed}
+
+\item{variable}{in case that dataset is a  SummarizedExperiment, indicate the Gold Standard}
 }
 \value{
 RangedSummarizedExperiment object with the pAUC and the TpAUC scores,and the TPR and FPR values for each ROC curve generated
@@ -33,5 +36,5 @@ It standarizes the partial area under the ROC curve by the tigher index
 \examples{
 library(fission)
 data("fission")
-resultsT <- TpAUC(fission, low.value = 0, up.value = 0.25, plot = TRUE, selection = c("SPNCRNA.1080","SPAC186.08c"))
+resultsT <- TpAUC(fission, low.value = 0, up.value = 0.25, plot = TRUE, selection = c("SPNCRNA.1080","SPAC186.08c"), varidable="strain")
 }

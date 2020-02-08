@@ -30,141 +30,7 @@ BiocStyle::markdown()
 library(boot)
 library(fission)
 library(SummarizedExperiment)
-```
-
-```{r, include=FALSE, results='hide'}
-portion_ROC <- function(up.limit, low.limit, fpr.roc,sen.roc){
-
-  i.low<-min(which(fpr.roc >= low.limit))
-  j.low<-max(i.low-1, 1)
-  i.up<-max(which(fpr.roc <= up.limit))
-  j.up<-min(1+i.up, length(fpr.roc))
-  fpr.proc<-fpr.roc[i.low:i.up]
-  sen.proc<-sen.roc[i.low:i.up]
-  if (fpr.roc[i.low] > low.limit) {
-    fpr.proc<-append(fpr.proc, low.limit, 0)
-    sen.proc<-append(sen.proc, sen.roc[j.low]+(sen.roc[i.low]-sen.roc[j.low])*(fpr.proc[1]-fpr.roc[j.low])/(fpr.roc[i.low]-fpr.roc[j.low]), 0)}
-  if (fpr.roc[i.up] < up.limit) {
-    fpr.proc<-append(fpr.proc, up.limit, length(fpr.proc))
-    sen.proc<-append(sen.proc, sen.roc[j.up]-(sen.roc[j.up]-sen.roc[i.up])*(fpr.roc[j.up]-fpr.proc[length(fpr.proc)])/(fpr.roc[j.up]-fpr.roc[i.up]), length(sen.proc))}
-
-  return(cbind(fpr.proc, sen.proc))
-}
-
-classification_Tp <- function(fpr.proc,sen.proc){
-
-  if (all(sen.proc>=fpr.proc)) {
-    proper.proc<-TRUE} else {proper.proc<-FALSE}
-  plr.proc<-(sen.proc-sen.proc[1])/(fpr.proc-fpr.proc[1])
-  plr.proc<-plr.proc[is.finite(plr.proc)]
-  if (all(plr.proc>=plr.proc[length(plr.proc)])) {
-    plr.proc.bounded<-TRUE} else {plr.proc.bounded<-FALSE}
-
-  classification <- c(plr.proc.bounded,proper.proc)
-
-  return(classification)
-}
-
-#Tighter partial area under a portion
-TpA <- function(fpr.proc, sen.proc){
-  pA.roc <- pA(fpr.proc, sen.proc)
-  type_roc <- classification_Tp(fpr.proc, sen.proc)
-
-  min.pAUC<-sum(diff(fpr.proc^2))/2
-  max.pAUC<-sum(diff(fpr.proc))
-  TpAUC.max.roc<-max.pAUC*max(sen.proc)
-
-  if (min(sen.proc) == max(sen.proc) ) {
-    TpAUC.min.roc =0} else {
-      if (type_roc[1]) {
-        TpAUC.min.roc<-sum(diff(fpr.proc))*mean(c(min(sen.proc), max(sen.proc)))
-        } else {
-
-        if (type_roc[2]) {
-            TpAUC.min.roc<-max(max.pAUC*min(sen.proc), min.pAUC)
-          } else {TpAUC.min.roc<-max.pAUC*min(sen.proc)}
-        }
-      }
-  if (min(fpr.proc) == max(fpr.proc) ) { TpAUC.max.roc = 1}
-
-  if (max(sen.proc)!=0 )
-  {TpA.roc<-(1+((pA.roc-TpAUC.min.roc)/(TpAUC.max.roc-TpAUC.min.roc)))/2} else {TpA.roc=0}
-
-  return(TpA.roc)
-
-}
-#Calculate the partial area under a portion
-pA <- function(fpr.proc,sen.proc){
-  aux <- sum(diff(fpr.proc)*
-              apply(cbind(sen.proc[-1],
-                          sen.proc[-length(sen.proc)]), 1, mean))
-  return(aux)
-}
-
-#McClish partial area under a portion
-MCpA <- function(sen.proc,fpr.proc){
-  pA.roc <- pA(fpr.proc, sen.proc)
-  type_roc <- classification_Tp(fpr.proc, sen.proc)
-
-  max.pAUC <- sum(diff(fpr.proc))
-  min.pAUC <- sum(diff(fpr.proc^2))/2
-
-  if (type_roc[2]) {
-    if (min(fpr.proc) == max(fpr.proc) ) { max.pAUC = 1}
-
-            MCpA.roc<-(1+((pA.roc-min.pAUC)/(max.pAUC-min.pAUC)))/2
-    } else {
-      MCpA.roc<-NA}
-
-  return(MCpA.roc)
-}
-
-fbootT<- function(dataset,bssample, low.limit, up.limit){
-  SpAUC <- NULL
-  bsdata <- dataset[bssample,]
-  for (i in 2:dim(bsdata)[2]) {
-    bsdata_temp <- cbind(bsdata[,1],bsdata[,i])
-    sen.roc<- points_curve(bsdata_temp[,1],bsdata_temp[,2])[,2]
-    fpr.roc<- points_curve(bsdata_temp[,1],bsdata_temp[,2])[,1]
-
-    fpr.proc <- portion_ROC(up.limit, low.limit, fpr.roc,sen.roc)[,1]
-
-    sen.proc <- portion_ROC(up.limit, low.limit, fpr.roc,sen.roc)[,2]
-    SpAUC[i-1] <- TpA(fpr.proc,sen.proc)
-    
-  }
-  return(SpAUC)
-}
-
-fbootM<- function(dataset,bssample, low.limit, up.limit){
-  SpAUC <- NULL
-  bsdata <- dataset[bssample,]
-  for (i in 2:dim(bsdata)[2]) {
-    bsdata_temp <- cbind(bsdata[,1],bsdata[,i])
-    sen.roc<- points_curve(bsdata_temp[,1],bsdata_temp[,2])[,2]
-    fpr.roc<- points_curve(bsdata_temp[,1],bsdata_temp[,2])[,1]
-
-    fpr.proc <- portion_ROC(up.limit, low.limit, fpr.roc,sen.roc)[,1]
-
-    sen.proc <- portion_ROC(up.limit, low.limit, fpr.roc,sen.roc)[,2]
-    SpAUC[i-1] <- MCpA(sen.proc,fpr.proc)
-
-
-  }
-  return(SpAUC)
-}
-
-createSE <- function(object, names){
-  names(object) <- names
-  names <- names
-
-  data.matrix <- as.matrix(object)
-  
-  se=SummarizedExperiment::SummarizedExperiment(assays=data.matrix,
-                          colData<-data.frame(metrics = (names)))
-  names(se@assays@data@listData[[1]]) <- names
-  return(se)
-}
+library(ROCpAI)
 ```
 
 
@@ -256,64 +122,6 @@ points_curve(genes[,1], genes[,2])
 This function calculates the pAUC its standardised partial area index given by [@McClish1989]. This function has five parameters. The first one is a data.frame or a RangedSummarizedExperiment object, if it is a data.frame object, the "Gold Standard" must be in the first column. The other four parameters are optionals; low.value and up.value are the false positive rate values that the function will use to calculate the pAUC. If low.value is NULL the function will take 0 as the lower limit. If up.value is NULL the function will use 1 as the upper value. The parameter plot generates a graph with the ROC curves generated. The last parameter is called "selection" and is only used if the parameter "dataset" is a RangedSummarizedExperiment object. This parameter is used to select the variables that will be analysed. If this parameter is NULL the function will analyse all the variables in the dataset.
 The function returns as RangedSummarizedExperiment object with the pAUC and the McpAUC scores,and the TPR and FPR values for each ROC curve generated.
 
-```{r, echo=FALSE}
-McpAUC <- function(dataset,  low.value=NULL, up.value=NULL, plot=FALSE, selection = NULL) {
-  St_pAUC <-NULL; pAUC <- NULL; sensitivity <- NULL; FPR <- NULL;
-  fpr.proc<-NULL; sen.proc<-NULL;  up.limit <- NULL; low.limit <- NULL
-  Ap.roc<-NULL;   object <- NULL;par(new=FALSE);  par <- NULL; legend <- NULL; abline <- NULL;
-
-  if (class(dataset)=="RangedSummarizedExperiment") {
-    strain <- dataset@colData@listData$strain
-    dataset <- as.data.frame(SummarizedExperiment::assay(dataset))
-    dataset <- scale(t(as.matrix(dataset[selection,])), center=TRUE, scale = TRUE)
-    name.variable <- colnames(dataset)
-    dataset <- as.data.frame(cbind(strain,dataset))
-  }  else {  dataset <- as.data.frame(dataset)
-  name.variable <- colnames(dataset)
-  }
-  dimension <- dim(dataset)
-
-  if(dimension[2]<2) {stop("database has to have at least 2 colums")}
-
-
-  for (i in 2:dimension[2]) {
-    dataset_temporal <- cbind(dataset[,1],dataset[i])
-    sen.roc<- points_curve(dataset_temporal[,1],dataset_temporal[,2])[,2]
-    fpr.roc<- points_curve(dataset_temporal[,1],dataset_temporal[,2])[,1]
-
-    ## Variables and initial values for the partial area of each ROC curve
-    ### PARTIAL ROC curve (fpr.proc; sen.proc) on [lower.fp <= e <= upper.fp]
-
-    if (!is.null(up.value)){up.limit <- up.value}else{up.limit <- 1}
-    if (!is.null(low.value)){low.limit <- low.value}else{low.limit <- 0}
-    fpr.proc <- portion_ROC(up.limit, low.limit, fpr.roc,sen.roc)[,1]
-    sen.proc <- portion_ROC(up.limit, low.limit, fpr.roc,sen.roc)[,2]
-
-    ### TYPE OF PORTION ROC curve on [lower.fp <= e <= upper.fp]
-
-    ### BOUNDS FOR PARTIAL AREA INDEXES: MIN & MAX boundaries for TpAUC index
-    St_pAUC[[i-1]] <- MCpA(sen.proc,fpr.proc)
-    pAUC[[i-1]] <- as.vector(pA(fpr.proc,sen.proc))
-    sensitivity[[i-1]] <-as.vector(sen.proc)
-    FPR[[i-1]] <- as.vector(fpr.proc)
-    if (isTRUE(plot)) {plot(sen.roc~fpr.roc, type="l", col=i, ylab="TPR", xlab="FPR")
-      legend(x= "bottomright",legend = name.variable[1:i-1], fill = 2:i, cex = 0.8)
-      abline(a=c(0,1),lwd=1, col="grey")
-      abline(v=low.value,col="black")
-      abline(v=up.value,col="black")
-      par(new=TRUE)
-
-    }
-
-  }
-
-  object <- list(St_pAUC, pAUC, sensitivity, FPR)
-  names <- c("St_pAUC","pAUC", "Sensitivity", "FPR")
-  se <- createSE(object, names)
-  return(se)
-}
-
-```
 
 ```{r}
 resultMc <- McpAUC(genes, low.value = 0, up.value = 0.25, plot=TRUE)
@@ -335,14 +143,15 @@ This function calculates the pAUC and its standardised pAUC by the tighter parti
 The function returns as RangedSummarizedExperiment object with the pAUC and the TpAUC scores,and the TPR and FPR values for each ROC curve generated
 
 ```{r, echo=FALSE}
-TpAUC <- function(dataset,  low.value = NULL, up.value = NULL, plot = FALSE, selection = NULL ) {
+TpAUC <- function(dataset,  low.value = NULL, up.value = NULL, plot = FALSE, selection = NULL, variable=NULL ) {
   St_pAUC <-NULL; pAUC <- NULL; sensitivity <- NULL; FPR <- NULL;
   fpr.proc<-NULL; sen.proc<-NULL;  up.limit <- NULL; low.limit <- NULL
   Ap.roc<-NULL;   object <- NULL;  par <- NULL; legend <- NULL; abline <- NULL;
     ## Variables and initial values for each sample<-ROC curve
-
+  par(new=FALSE)
   if (class(dataset)=="RangedSummarizedExperiment") {
-    strain <- dataset@colData@listData$strain
+    strain <- dataset@colData@listData
+    strain <- strain[variable]
     dataset <- as.data.frame(SummarizedExperiment::assay(dataset))
     dataset <- scale(t(as.matrix(dataset[selection,])), center=TRUE, scale = TRUE)
     name.variable <- colnames(dataset)
@@ -376,7 +185,8 @@ TpAUC <- function(dataset,  low.value = NULL, up.value = NULL, plot = FALSE, sel
       abline(v=up.value,col="black")
       par(new=TRUE)
 
-      }
+    }
+
   }
   object <- list(St_pAUC, pAUC, sensitivity, FPR)
   names <- c("St_pAUC","pAUC", "Sensitivity", "FPR")
@@ -409,12 +219,13 @@ This function returns a SummarizedExperiment object with the TpAUC, the standard
 
 ```{r, echo=FALSE}
 TpAUCboot <- function(dataset,  low.value = NULL, up.value = NULL,
-                      r=50, seed=NULL, level = 0.95, type.interval="perc", selection = NULL) {
+                      r=50, seed=NULL, level = 0.95, type.interval="perc", selection = NULL, variable=NULL) {
 
   ci_TpAUC <- NULL; CpA=NULL;ci_MCpAUC <- NULL; sd <- NULL; par <- NULL; legend <- NULL; abline <- NULL;
 
   if (class(dataset)=="RangedSummarizedExperiment") {
-    strain <- dataset@colData@listData$strain
+    strain <- dataset@colData@listData
+    strain <- strain[variable]
     dataset <- as.data.frame(SummarizedExperiment::assay(dataset))
     dataset <- scale(t(as.matrix(dataset[selection,])), center=TRUE, scale = TRUE)
     name.variable <- colnames(dataset)
@@ -476,12 +287,13 @@ This function returns a SummarizedExperiment object with the MCpAUC, the standar
 
 ```{r, echo=FALSE}
 MCpAUCboot <- function(dataset,  low.value = NULL, up.value = NULL,
-                       r=50, seed=NULL, level = 0.95, type.interval="perc", selection = NULL) {
+                       r=50, seed=NULL, level = 0.95, type.interval="perc", selection = NULL, variable=NULL) {
 
   ci_MCpAUC <- NULL; sd <- NULL; par <- NULL; legend <- NULL; abline <- NULL;
 
   if (class(dataset)=="RangedSummarizedExperiment") {
-    strain <- dataset@colData@listData$strain
+    strain <- dataset@colData@listData
+    strain <- strain[variable]
     dataset <- as.data.frame(SummarizedExperiment::assay(dataset))
     dataset <- scale(t(as.matrix(dataset[selection,])), center=TRUE, scale = TRUE)
     name.variable <- colnames(dataset)
@@ -523,7 +335,6 @@ MCpAUCboot <- function(dataset,  low.value = NULL, up.value = NULL,
   return(x)
 
 }
-
 ```
 
 ```{r, warning='hide'}

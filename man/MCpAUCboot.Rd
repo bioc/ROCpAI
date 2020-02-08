@@ -12,7 +12,8 @@ MCpAUCboot(
   seed = NULL,
   level = 0.95,
   type.interval = "perc",
-  selection = NULL
+  selection = NULL,
+  variable = NULL
 )
 }
 \arguments{
@@ -34,6 +35,8 @@ or simply "all" which will compute all five types of intervals.}
 
 \item{selection}{vector that will only be used if the parameter "dataset" is a RangedSummarizedExperiment object.
 This parameter is used to select the variables that will be analysed}
+
+\item{variable}{in case that dataset is a  SummarizedExperiment, indicate the Gold Standard}
 }
 \value{
 SummarizedExperiment object with the MCpAUC, the standard desviation, and the lower and upper limits of the confidence interval.
@@ -44,5 +47,5 @@ Calculates the confidence interval using a boot analysis
 \examples{
 library(fission)
 data("fission")
-resultsMCboot <- MCpAUCboot(fission,low.value = 0, up.value = 0.25, seed = 1234, selection = c("SPNCRNA.1080","SPAC186.08c"))
+resultsMCboot <- MCpAUCboot(fission,low.value = 0, up.value = 0.25, seed = 1234, selection = c("SPNCRNA.1080","SPAC186.08c"), variable="strain")
 }

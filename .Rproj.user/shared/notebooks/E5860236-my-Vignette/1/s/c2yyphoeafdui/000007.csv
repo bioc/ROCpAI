@@ -1,0 +1,5 @@
+"0","resultMc <- McpAUC(genes, low.value = 0, up.value = 0.25, plot=TRUE)
+"
+"2","Error in legend(x = ""bottomright"", legend = name.variable[2:i - 2], fill = 2:i,  : 
+  'legend' is of length 0
+"

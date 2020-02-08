@@ -10,6 +10,7 @@
 #' @param up.value upper false positive rate value that the function will use to calculate the pAUC
 #' @param selection  vector that will only be used if the parameter "dataset" is a RangedSummarizedExperiment object.
 #' This parameter is used to select the variables that will be analysed
+#' @param variable in case that dataset is a  SummarizedExperiment, indicate the Gold Standard
 #' @param level confidence level
 #' @return SummarizedExperiment object with the MCpAUC, the standard desviation, and the lower and upper limits of the confidence interval.
 #' @export MCpAUCboot
@@ -17,16 +18,17 @@
 #' @examples
 #'library(fission)
 #'data("fission")
-#'resultsMCboot <- MCpAUCboot(fission,low.value = 0, up.value = 0.25, seed = 1234, selection = c("SPNCRNA.1080","SPAC186.08c"))
+#'resultsMCboot <- MCpAUCboot(fission,low.value = 0, up.value = 0.25, seed = 1234, selection = c("SPNCRNA.1080","SPAC186.08c"), variable="strain")
 
 
 MCpAUCboot <- function(dataset,  low.value = NULL, up.value = NULL,
-                       r=50, seed=NULL, level = 0.95, type.interval="perc", selection = NULL) {
+                       r=50, seed=NULL, level = 0.95, type.interval="perc", selection = NULL, variable=NULL) {
 
   ci_MCpAUC <- NULL; sd <- NULL; par <- NULL; legend <- NULL; abline <- NULL;
 
   if (class(dataset)=="RangedSummarizedExperiment") {
-    strain <- dataset@colData@listData$strain
+    strain <- dataset@colData@listData
+    strain <- strain[variable][[1]]
     dataset <- as.data.frame(SummarizedExperiment::assay(dataset))
     dataset <- scale(t(as.matrix(dataset[selection,])), center=TRUE, scale = TRUE)
     name.variable <- colnames(dataset)

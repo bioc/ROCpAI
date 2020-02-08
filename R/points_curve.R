@@ -34,3 +34,4 @@ points_curve<-function(x, y){
 }
 
 
+

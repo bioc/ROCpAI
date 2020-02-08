@@ -96,9 +96,7 @@ fbootT<- function(dataset,bssample, low.limit, up.limit){
     bsdata_temp <- cbind(bsdata[,1],bsdata[,i])
     sen.roc<- points_curve(bsdata_temp[,1],bsdata_temp[,2])[,2]
     fpr.roc<- points_curve(bsdata_temp[,1],bsdata_temp[,2])[,1]
-
     fpr.proc <- portion_ROC(up.limit, low.limit, fpr.roc,sen.roc)[,1]
-
     sen.proc <- portion_ROC(up.limit, low.limit, fpr.roc,sen.roc)[,2]
     SpAUC[i-1] <- TpA(fpr.proc,sen.proc)
 

@@ -1,7 +1,6 @@
 import(boot)
 import(SummarizedExperiment)
 import(fission)
-import(knitr)
 exportPattern("internal_function")
 exportPattern("McpAUC")
 exportPattern("TpAUC")

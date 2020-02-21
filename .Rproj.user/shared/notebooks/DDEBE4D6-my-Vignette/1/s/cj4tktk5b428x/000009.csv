@@ -1,4 +1,0 @@
-"0","resultMc <- McpAUC(genes, low.value = 0, up.value = 0.25, plot=TRUE)
-"
-"2","Error: $ operator not defined for this S4 class
-"

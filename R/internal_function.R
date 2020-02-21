@@ -40,23 +40,23 @@ TpA <- function(fpr.proc, sen.proc){
 
   min.pAUC<-sum(diff(fpr.proc^2))/2
   max.pAUC<-sum(diff(fpr.proc))
-  TpAUC.max.roc<-max.pAUC*max(sen.proc)
+  tpAUC.max.roc<-max.pAUC*max(sen.proc)
 
   if (min(sen.proc) == max(sen.proc) ) {
-    TpAUC.min.roc =0} else {
+    tpAUC.min.roc =0} else {
       if (type_roc[1]) {
-        TpAUC.min.roc<-sum(diff(fpr.proc))*mean(c(min(sen.proc), max(sen.proc)))
+        tpAUC.min.roc<-sum(diff(fpr.proc))*mean(c(min(sen.proc), max(sen.proc)))
         } else {
 
         if (type_roc[2]) {
-            TpAUC.min.roc<-max(max.pAUC*min(sen.proc), min.pAUC)
-          } else {TpAUC.min.roc<-max.pAUC*min(sen.proc)}
+            tpAUC.min.roc<-max(max.pAUC*min(sen.proc), min.pAUC)
+          } else {tpAUC.min.roc<-max.pAUC*min(sen.proc)}
         }
       }
-  if (min(fpr.proc) == max(fpr.proc) ) { TpAUC.max.roc = 1}
+  if (min(fpr.proc) == max(fpr.proc) ) { tpAUC.max.roc = 1}
 
   if (max(sen.proc)!=0 )
-  {TpA.roc<-(1+((pA.roc-TpAUC.min.roc)/(TpAUC.max.roc-TpAUC.min.roc)))/2} else {TpA.roc=0}
+  {TpA.roc<-(1+((pA.roc-tpAUC.min.roc)/(tpAUC.max.roc-tpAUC.min.roc)))/2} else {TpA.roc=0}
 
   return(TpA.roc)
 
@@ -94,8 +94,8 @@ fbootT<- function(dataset,bssample, low.limit, up.limit){
   bsdata <- dataset[bssample,]
   for (i in 2:dim(bsdata)[2]) {
     bsdata_temp <- cbind(bsdata[,1],bsdata[,i])
-    sen.roc<- points_curve(bsdata_temp[,1],bsdata_temp[,2])[,2]
-    fpr.roc<- points_curve(bsdata_temp[,1],bsdata_temp[,2])[,1]
+    sen.roc<- pointsCurve(bsdata_temp[,1],bsdata_temp[,2])[,2]
+    fpr.roc<- pointsCurve(bsdata_temp[,1],bsdata_temp[,2])[,1]
     fpr.proc <- portion_ROC(up.limit, low.limit, fpr.roc,sen.roc)[,1]
     sen.proc <- portion_ROC(up.limit, low.limit, fpr.roc,sen.roc)[,2]
     SpAUC[i-1] <- TpA(fpr.proc,sen.proc)
@@ -110,8 +110,8 @@ fbootM<- function(dataset,bssample, low.limit, up.limit){
   bsdata <- dataset[bssample,]
   for (i in 2:dim(bsdata)[2]) {
     bsdata_temp <- cbind(bsdata[,1],bsdata[,i])
-    sen.roc<- points_curve(bsdata_temp[,1],bsdata_temp[,2])[,2]
-    fpr.roc<- points_curve(bsdata_temp[,1],bsdata_temp[,2])[,1]
+    sen.roc<- pointsCurve(bsdata_temp[,1],bsdata_temp[,2])[,2]
+    fpr.roc<- pointsCurve(bsdata_temp[,1],bsdata_temp[,2])[,1]
 
     fpr.proc <- portion_ROC(up.limit, low.limit, fpr.roc,sen.roc)[,1]
 

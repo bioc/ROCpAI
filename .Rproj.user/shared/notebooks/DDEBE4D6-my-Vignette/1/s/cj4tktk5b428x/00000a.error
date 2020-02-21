@@ -1,1 +1,0 @@
-{"frames":[{"character_number":0,"end_character_number":0,"end_line_number":0,"file":"","func":"McpAUC(genes, low.value = 0, up.value = 0.25, plot = TRUE)","line_number":0},{"character_number":3,"end_character_number":31,"end_line_number":53,"file":"","func":"createSE(object, names)","line_number":53}],"message":"Error: $ operator not defined for this S4 class\n"}

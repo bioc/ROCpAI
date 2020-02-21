@@ -7,13 +7,12 @@ Authors@R: c(person("Juan-Pedro", "Garcia", role = c("aut", "cre"), email = "jua
     person("Juana-María", "Vivo", email = "jmvivomo@um.es", role = "aut")
 	)
 BugReports: https://github.com/juanpegarcia/ROCpAI/tree/master/issues
-Maintainer: Juan-Pedro García <juanpedro.garcia4@um.es>
-Description: The package analyzes the Curve ROC, identificates it among different types of Curve ROC and calculates the area under de curve through the method that is most accuracy. More about what it does (maybe more than one line)
+Description: The package analyzes the Curve ROC, identificates it among different types of Curve ROC and calculates the area under de curve through the method that is most accuracy. This package is able to standarizate proper and improper pAUC.
 License: GPL-3
 Encoding: UTF-8
 LazyData: TRUE
-Depends: boot, SummarizedExperiment, fission, knitr
-import: boot, SummarizedExperiment, fission, knitr
+Depends: boot, SummarizedExperiment, fission, knitr, methods
+import: boot, SummarizedExperiment, fission, knitr, methods
 biocViews: Software, StatisticalMethod, Classification
 RoxygenNote: 7.0.2
 VignetteBuilder: knitr

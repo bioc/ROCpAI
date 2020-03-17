@@ -1,2 +1,0 @@
-"0",""
-"0","McpAUC.fission.genes <- McpAUC(fission.datos.genes, plot=TRUE, low.value = 0, up.value = 0.2)"

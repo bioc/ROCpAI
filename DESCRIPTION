@@ -1,7 +1,7 @@
 Package: ROCpAI
 Type: Package
 Title: Receiver Operating Characteristic Partial Area Indexes for evaluating classifiers
-Version: 1.3.0
+Version: 1.4.0
 Authors@R: c(person("Juan-Pedro", "Garcia", role = c("aut", "cre"), email = "juanpedro.garcia4@um.es"),
     person("Manuel", "Franco", email = "mfranco@um.es", role = "aut"),
     person("Juana-María", "Vivo", email = "jmvivomo@um.es", role = "aut")
